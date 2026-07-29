@@ -3,6 +3,7 @@
 # Run as root or with sudo: sudo ./install.sh
 set -euo pipefail
 
+PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 VALHALLA_DIR="/opt/valhalla"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 INSTALL_USER="${SUDO_USER:-${USER}}"
@@ -49,8 +50,4 @@ echo "[valhalla-install] Building image (downloads Portugal PBF)..."
 sudo -u "$INSTALL_USER" docker compose build
 sudo -u "$INSTALL_USER" docker compose up -d
 
-echo ""
 echo "[valhalla-install] Done."
-echo "  Status:  curl http://127.0.0.1:8002/status"
-echo "  Logs:    docker logs -f valhalla"
-echo "  First tile build = slow. Wait before route tests."

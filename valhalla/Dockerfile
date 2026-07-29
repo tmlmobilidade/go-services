@@ -2,6 +2,7 @@ FROM ghcr.io/nilsnolde/docker-valhalla/valhalla:latest
 
 USER root
 
+# Runtime defaults (compose no longer sets these)
 ENV server_threads=4 \
     serve_tiles=True \
     use_tiles_ignore_pbf=False \
@@ -32,7 +33,7 @@ RUN apt-get update \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/*
 
-COPY entrypoint.sh /entrypoint.sh
+COPY scripts/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh && chown valhalla:valhalla /entrypoint.sh
 
 USER valhalla

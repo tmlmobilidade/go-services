@@ -61,7 +61,7 @@ if curl -fsS -G "http://127.0.0.1:8002/route" \
   echo "[valhalla-update] Health check succeeded."
 
 else
-  echo "[valhalla-update] WARNING: Health check failed."
+  echo "[valhalla-update] WARNING: Health check failed (tiles may still be building)."
   echo "[valhalla-update] Check logs with: docker logs valhalla"
 fi
 
