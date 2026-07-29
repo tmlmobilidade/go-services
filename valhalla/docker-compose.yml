@@ -1,6 +1,6 @@
 services:
   valhalla:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    image: valhalla-tml:latests
+    build: .
+    image: valhalla-tml:latest
+    ports:
+      - "8002:8002"
