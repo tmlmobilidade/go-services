@@ -1,7 +1,0 @@
-[
-  {
-    "name": "valhalla-tml",
-    "context": "valhalla",
-    "timeout_minutes": 120
-  }
-]

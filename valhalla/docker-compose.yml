@@ -1,6 +1,0 @@
-services:
-  valhalla:
-    build: .
-    image: valhalla-tml:latest
-    ports:
-      - "8002:8002"
