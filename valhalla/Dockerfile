@@ -13,6 +13,8 @@ ENV server_threads=4 \
     build_tar=True \
     force_rebuild=False \
     update_existing_config=True \
-    TZ=Europe/Lisbon
+    TZ=Europe/Lisbon \
+    PBF_URL=https://download.geofabrik.de/europe/portugal-latest.osm.pbf
+
 
 EXPOSE 8002
