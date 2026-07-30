@@ -1,0 +1,87 @@
+name: Docker images
+
+on:
+  push:
+    branches: [prd]
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  select-modules:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.select.outputs.matrix }}
+      has_modules: ${{ steps.select.outputs.has_modules }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Select modules to build
+        id: select
+        shell: bash
+        run: |
+          set -euo pipefail
+          MODULES_FILE=".github/docker-modules.json"
+
+          if [ ! -f "$MODULES_FILE" ]; then
+            echo "Missing $MODULES_FILE"
+            exit 1
+          fi
+
+          BEFORE="${{ github.event.before }}"
+          AFTER="${{ github.sha }}"
+          CHANGED_FILE="$(mktemp)"
+
+          if [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then
+            git ls-files > "$CHANGED_FILE"
+          else
+            git diff --name-only "$BEFORE" "$AFTER" > "$CHANGED_FILE" || true
+          fi
+
+          MATRIX="$(
+            jq -c --rawfile changed "$CHANGED_FILE" '
+              {
+                include: [
+                  .[] as $m
+                  | select(
+                      ($changed | split("\n"))
+                      | map(select(
+                          startswith($m.context + "/")
+                          or . == ".github/docker-modules.json"
+                          or startswith(".github/workflows/docker-")
+                        ))
+                      | length > 0
+                    )
+                ]
+              }
+            ' "$MODULES_FILE"
+          )"
+          rm -f "$CHANGED_FILE"
+
+          COUNT="$(echo "$MATRIX" | jq '.include | length')"
+          echo "matrix=$MATRIX"
+          echo "matrix=$MATRIX" >> "$GITHUB_OUTPUT"
+
+          if [ "$COUNT" -gt 0 ]; then
+            echo "has_modules=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_modules=false" >> "$GITHUB_OUTPUT"
+            echo "No modules selected — skip build."
+          fi
+
+  build:
+    needs: select-modules
+    if: needs.select-modules.outputs.has_modules == 'true'
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.select-modules.outputs.matrix) }}
+    uses: ./.github/workflows/docker-build-push.yml
+    with:
+      name: ${{ matrix.name }}
+      context: ${{ matrix.context }}
+      timeout_minutes: ${{ matrix.timeout_minutes }}
+    secrets: inherit
