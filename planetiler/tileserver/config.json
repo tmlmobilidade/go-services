@@ -1,0 +1,27 @@
+{
+   "options": {
+		"paths": {
+			"fonts": "fonts",
+			"styles": "styles"
+		}
+	},
+	"data": {
+		"openmaptiles": {
+			"mbtiles": "current.mbtiles"
+		}
+	},
+	"styles": {
+		"default": {
+			"style": "yellow/style.json",
+			"tilejson": {
+				"type": "overlay",
+				"bounds": [
+					8.44806,
+					47.32023,
+					8.62537,
+					47.43468
+				]
+         }
+      }
+   }
+}
