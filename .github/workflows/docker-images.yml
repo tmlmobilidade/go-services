@@ -5,6 +5,7 @@ on:
     branches: [prd]
     paths:
       - "**/Dockerfile"
+      - "**/Dockerfile.*"
 
 permissions:
   contents: read
@@ -28,24 +29,41 @@ jobs:
           set -euo pipefail
 
           if git rev-parse --verify HEAD~1 >/dev/null 2>&1; then
-            FILES="$(git diff --name-only HEAD~1 HEAD -- '**/Dockerfile')"
+            FILES="$(git diff --name-only HEAD~1 HEAD | grep -E '(^|/)Dockerfile(\.[^/]+)?$' || true)"
           else
-            FILES="$(git ls-files '**/Dockerfile')"
+            FILES="$(git ls-files | grep -E '(^|/)Dockerfile(\.[^/]+)?$' || true)"
           fi
 
-          MODULES="$(echo "$FILES" | sed -n 's|/Dockerfile$||p' | sort -u)"
-          echo "Modules:"
-          echo "$MODULES"
+          ENTRIES=()
+          while IFS= read -r f; do
+            [ -z "$f" ] && continue
+            dir="$(dirname "$f")"
+            base="$(basename "$f")"
 
-          MATRIX="$(echo "$MODULES" | jq -R -s -c '
-            { include: (split("\n") | map(select(length > 0) | { name: . })) }
-          ')"
+            if [ "$base" = "Dockerfile" ]; then
+              name="$dir"
+              file="Dockerfile"
+            elif [[ "$base" == Dockerfile.* ]]; then
+              name="${base#Dockerfile.}"
+              file="$base"
+            else
+              continue
+            fi
 
-          if [ "$(echo "$MATRIX" | jq '.include | length')" -eq 0 ]; then
+            ENTRIES+=("$(jq -nc \
+              --arg name "$name" \
+              --arg context "$dir" \
+              --arg file "$file" \
+              '{name:$name,context:$context,file:$file}')")
+          done <<< "$FILES"
+
+          if [ "${#ENTRIES[@]}" -eq 0 ]; then
             echo "No Dockerfiles changed"
             exit 1
           fi
 
+          MATRIX="$(printf '%s\n' "${ENTRIES[@]}" | jq -s -c '{include: .}')"
+          echo "Matrix: $MATRIX"
           echo "matrix=$MATRIX" >> "$GITHUB_OUTPUT"
 
   build:
@@ -81,8 +99,8 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
-          context: ./${{ matrix.name }}
-          file: ./${{ matrix.name }}/Dockerfile
+          context: ./${{ matrix.context }}
+          file: ./${{ matrix.context }}/${{ matrix.file }}
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
