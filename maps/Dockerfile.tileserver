@@ -1,5 +1,7 @@
 FROM maptiler/tileserver-gl
 
+USER root
+
 COPY tileserver/ /tmp/
 
 COPY entrypoint-tileserver.sh /entrypoint.sh
