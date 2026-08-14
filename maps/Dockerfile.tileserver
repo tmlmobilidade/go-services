@@ -4,6 +4,7 @@ USER root
 
 COPY tileserver/ /tmp/
 
+# Copy the entrypoint script
 COPY entrypoint-tileserver.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
