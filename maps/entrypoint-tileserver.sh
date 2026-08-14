@@ -1,5 +1,6 @@
 #!/bin/sh
 
-cp -rn /tmp/. /data/
+cp -r --update=none /tmp/. /data/
 
-exec "$@"
+# Run the original entrypoint script from the tileserver image
+exec /usr/src/app/docker-entrypoint.sh
