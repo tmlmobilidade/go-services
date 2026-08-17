@@ -12,9 +12,7 @@ COPY --from=spreet /usr/local/cargo/bin/spreet /usr/local/bin/spreet
 WORKDIR /build
 COPY assets ./assets
 COPY scripts ./scripts
-COPY tileserver/config.json ./tileserver/config.json
-COPY tileserver/styles/dark/style.json ./tileserver/styles/dark/style.json
-COPY tileserver/styles/light/style.json ./tileserver/styles/light/style.json
+COPY tileserver/ ./tileserver/
 
 RUN sh scripts/fetch-fonts.sh \
   && node scripts/build-sprites.mjs
