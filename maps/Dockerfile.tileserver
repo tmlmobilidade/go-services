@@ -1,10 +1,30 @@
+# Build glyphs + sprite atlases from assets/scripts
+FROM rust:1-bookworm AS spreet
+RUN cargo install spreet --version 0.13.1
+
+FROM node:22-bookworm AS assets
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends curl unzip ca-certificates \
+  && rm -rf /var/lib/apt/lists/*
+
+COPY --from=spreet /usr/local/cargo/bin/spreet /usr/local/bin/spreet
+
+WORKDIR /build
+COPY assets ./assets
+COPY scripts ./scripts
+COPY tileserver/config.json ./tileserver/config.json
+COPY tileserver/styles/dark/style.json ./tileserver/styles/dark/style.json
+COPY tileserver/styles/light/style.json ./tileserver/styles/light/style.json
+
+RUN sh scripts/fetch-fonts.sh \
+  && node scripts/build-sprites.mjs
+
+# Runtime tileserver-gl image
 FROM maptiler/tileserver-gl
 
 USER root
 
-COPY tileserver/ /tmp/
-
-# Copy the entrypoint script
+COPY --from=assets /build/tileserver/ /tmp/tileserver/
 COPY entrypoint-tileserver.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 

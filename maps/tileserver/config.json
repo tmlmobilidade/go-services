@@ -1,5 +1,5 @@
 {
-   "options": {
+	"options": {
 		"paths": {
 			"fonts": "fonts",
 			"styles": "styles"
@@ -11,17 +11,13 @@
 		}
 	},
 	"styles": {
+		"dark": {
+			"serve_data": true,
+			"style": "dark/style.json"
+		},
 		"default": {
-			"style": "yellow/style.json",
-			"tilejson": {
-				"type": "overlay",
-				"bounds": [
-					8.44806,
-					47.32023,
-					8.62537,
-					47.43468
-				]
-         }
-      }
-   }
+			"serve_data": true,
+			"style": "light/style.json"
+		}
+	}
 }

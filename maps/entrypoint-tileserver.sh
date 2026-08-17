@@ -1,4 +1,5 @@
 #!/bin/sh
+set -eu
 
 cp -r --update=none /tmp/. /data/
 
