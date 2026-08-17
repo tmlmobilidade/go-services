@@ -5,7 +5,8 @@ ENV JAVA_TOOL_OPTIONS="-Xms6g -Xmx14g"
 CMD [ \
   "--force", \
   "--download", \
-  "--osm_url=https://download.geofabrik.de/europe-latest.osm.pbf", \
+  #"--osm_url=https://download.geofabrik.de/europe-latest.osm.pbf", \
+  "--osm_url=https://planet.openstreetmap.org/pbf/planet-latest.osm.pbf", \
   "--fetch-wikidata=false", \
   "--use_wikidata=false", \
   "--refresh-sources", \
