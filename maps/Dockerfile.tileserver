@@ -24,7 +24,7 @@ FROM maptiler/tileserver-gl
 
 USER root
 
-COPY --from=assets /build/tileserver/ /tmp/tileserver/
+COPY --from=assets /build/tileserver/ /tmp/
 COPY entrypoint-tileserver.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
