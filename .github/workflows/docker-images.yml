@@ -3,9 +3,10 @@ name: Docker images
 on:
   push:
     branches: [prd]
-    paths:
-      - "**/Dockerfile"
-      - "**/Dockerfile.*"
+    paths-ignore:
+      - ".github/**"
+      - "LICENSE"
+      - "README.md"
 
 permissions:
   contents: read
@@ -22,43 +23,64 @@ jobs:
         with:
           fetch-depth: 2
 
-      - name: Detect changed Dockerfiles
+      - name: Detect service to rebuild
         id: detect
         shell: bash
         run: |
           set -euo pipefail
 
           if git rev-parse --verify HEAD~1 >/dev/null 2>&1; then
-            FILES="$(git diff --name-only HEAD~1 HEAD | grep -E '(^|/)Dockerfile(\.[^/]+)?$' || true)"
+            CHANGED="$(git diff --name-only HEAD~1 HEAD)"
           else
-            FILES="$(git ls-files | grep -E '(^|/)Dockerfile(\.[^/]+)?$' || true)"
+            CHANGED="$(git ls-files)"
           fi
 
-          ENTRIES=()
-          while IFS= read -r f; do
-            [ -z "$f" ] && continue
-            dir="$(dirname "$f")"
-            base="$(basename "$f")"
+          echo "Changed files:"
+          echo "$CHANGED"
 
-            if [ "$base" = "Dockerfile" ]; then
-              name="$dir"
-              file="Dockerfile"
-            elif [[ "$base" == Dockerfile.* ]]; then
-              name="${base#Dockerfile.}"
-              file="$base"
-            else
-              continue
+          # Top-level dirs that contain a Dockerfile / Dockerfile.*
+          SERVICES="$(
+            echo "$CHANGED" \
+              | awk -F/ 'NF >= 1 && $1 != "" && $1 != ".github" { print $1 }' \
+              | sort -u \
+              | while read -r dir; do
+                  [ -d "$dir" ] || continue
+                  if compgen -G "$dir/Dockerfile" > /dev/null \
+                    || compgen -G "$dir/Dockerfile.*" > /dev/null; then
+                    echo "$dir"
+                  fi
+                done
+          )"
+
+          echo "Services:"
+          echo "$SERVICES"
+
+          ENTRIES=()
+          while IFS= read -r dir; do
+            [ -z "$dir" ] && continue
+
+            if [ -f "$dir/Dockerfile" ]; then
+              ENTRIES+=("$(jq -nc \
+                --arg name "$dir" \
+                --arg context "$dir" \
+                --arg file "Dockerfile" \
+                '{name:$name,context:$context,file:$file}')")
             fi
 
-            ENTRIES+=("$(jq -nc \
-              --arg name "$name" \
-              --arg context "$dir" \
-              --arg file "$file" \
-              '{name:$name,context:$context,file:$file}')")
-          done <<< "$FILES"
+            for f in "$dir"/Dockerfile.*; do
+              [ -f "$f" ] || continue
+              base="$(basename "$f")"
+              name="${base#Dockerfile.}"
+              ENTRIES+=("$(jq -nc \
+                --arg name "$name" \
+                --arg context "$dir" \
+                --arg file "$base" \
+                '{name:$name,context:$context,file:$file}')")
+            done
+          done <<< "$SERVICES"
 
           if [ "${#ENTRIES[@]}" -eq 0 ]; then
-            echo "No Dockerfiles changed"
+            echo "No service images to build"
             exit 1
           fi
 
