@@ -1,5 +1,6 @@
 FROM grafana/grafana:latest
 
 ENV GF_PLUGINS_PREINSTALL=grafana-clickhouse-datasource
+ENV GF_DASHBOARDS_MIN_REFRESH_INTERVAL=1s
 
 EXPOSE 3000
