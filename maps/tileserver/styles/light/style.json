@@ -2948,7 +2948,7 @@
       "type": "symbol",
       "source": "openmaptiles",
       "source-layer": "poi",
-      "minzoom": 14,
+      "minzoom": 17,
       "filter": [
         "all",
         [
@@ -3065,7 +3065,7 @@
       "type": "symbol",
       "source": "openmaptiles",
       "source-layer": "poi",
-      "minzoom": 14,
+      "minzoom": 17,
       "filter": [
         "any",
         [
@@ -3195,7 +3195,7 @@
       "type": "symbol",
       "source": "openmaptiles",
       "source-layer": "poi",
-      "minzoom": 15,
+      "minzoom": 17,
       "filter": [
         "any",
         [
@@ -3349,7 +3349,7 @@
       "type": "symbol",
       "source": "openmaptiles",
       "source-layer": "poi",
-      "minzoom": 15,
+      "minzoom": 17,
       "filter": [
         "any",
         [
@@ -3613,7 +3613,7 @@
       "type": "symbol",
       "source": "openmaptiles",
       "source-layer": "poi",
-      "minzoom": 16,
+      "minzoom": 17,
       "filter": [
         "any",
         [
@@ -3623,7 +3623,6 @@
             "class"
           ],
           [
-            "grocery",
             "atm"
           ],
           true,
@@ -3633,12 +3632,10 @@
           "match",
           [
             "get",
-            "subclass"
-          ],
-          [
-            "supermarket",
-            "convenience",
-            "toilets",
+          "subclass"
+        ],
+        [
+          "toilets",
             "drinking_water",
             "atm",
             "bank"
@@ -3752,7 +3749,7 @@
       "type": "symbol",
       "source": "openmaptiles",
       "source-layer": "poi",
-      "minzoom": 16,
+      "minzoom": 17,
       "filter": [
         "any",
         [
@@ -3776,7 +3773,6 @@
             "subclass"
           ],
           [
-            "restaurant",
             "cafe",
             "fast_food",
             "hotel",
@@ -3789,6 +3785,7 @@
         ]
       ],
       "layout": {
+        "visibility": "none",
         "symbol-sort-key": [
           "coalesce",
           [
@@ -3897,7 +3894,7 @@
       "type": "symbol",
       "source": "openmaptiles",
       "source-layer": "poi",
-      "minzoom": 16,
+      "minzoom": 17,
       "filter": [
         "any",
         [
