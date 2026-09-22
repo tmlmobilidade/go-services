@@ -3589,33 +3589,16 @@
       "source-layer": "poi",
       "minzoom": 15,
       "filter": [
-        "any",
+        "match",
         [
-          "match",
-          [
-            "get",
-            "class"
-          ],
-          [
-            "fuel"
-          ],
-          true,
-          false
+          "get",
+          "subclass"
         ],
         [
-          "match",
-          [
-            "get",
-            "subclass"
-          ],
-          [
-            "fuel",
-            "charging_station",
-            "bicycle_rental"
-          ],
-          true,
-          false
-        ]
+          "bicycle_rental"
+        ],
+        true,
+        false
       ],
       "layout": {
         "symbol-sort-key": [
