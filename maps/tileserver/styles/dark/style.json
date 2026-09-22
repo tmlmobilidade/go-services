@@ -825,7 +825,7 @@
       "id": "road-area-pedestrian",
       "minzoom": 14,
       "paint": {
-        "fill-color": "#344254",
+        "fill-color": "#263447",
         "fill-opacity": 0.82,
         "fill-outline-color": "#45556b"
       },
@@ -859,9 +859,9 @@
       ],
       "id": "bridge-area",
       "paint": {
-        "fill-color": "#435268",
+        "fill-color": "#334258",
         "fill-opacity": 0.68,
-        "fill-outline-color": "#5a6c84"
+        "fill-outline-color": "#46586f"
       },
       "source": "openmaptiles",
       "source-layer": "transportation",
@@ -919,7 +919,7 @@
         "line-join": "round"
       },
       "paint": {
-        "line-color": "#38485d",
+        "line-color": "#2d3b50",
         "line-opacity": [
           "interpolate",
           [
@@ -1009,7 +1009,7 @@
         "line-join": "round"
       },
       "paint": {
-        "line-color": "#4a5c73",
+        "line-color": "#3a4b61",
         "line-opacity": [
           "interpolate",
           [
@@ -1094,7 +1094,7 @@
         "line-join": "round"
       },
       "paint": {
-        "line-color": "#5a6c84",
+        "line-color": "#46586f",
         "line-opacity": [
           "interpolate",
           [
@@ -1185,7 +1185,7 @@
         "line-join": "round"
       },
       "paint": {
-        "line-color": "#687991",
+        "line-color": "#4a5b72",
         "line-opacity": [
           "interpolate",
           [
@@ -1275,7 +1275,7 @@
         "line-join": "round"
       },
       "paint": {
-        "line-color": "#8799af",
+        "line-color": "#65778e",
         "line-opacity": [
           "interpolate",
           [
@@ -1360,7 +1360,7 @@
         "line-join": "round"
       },
       "paint": {
-        "line-color": "#a2b2c5",
+        "line-color": "#7d8fa5",
         "line-opacity": [
           "interpolate",
           [
@@ -1451,7 +1451,7 @@
       },
       "minzoom": 14,
       "paint": {
-        "line-color": "#56667d",
+        "line-color": "#3c4b61",
         "line-dasharray": [
           1,
           0.7
@@ -1627,7 +1627,7 @@
         "line-join": "round"
       },
       "paint": {
-        "line-color": "#38485d",
+        "line-color": "#2d3b50",
         "line-opacity": [
           "interpolate",
           [
@@ -1697,7 +1697,7 @@
         "line-join": "round"
       },
       "paint": {
-        "line-color": "#4a5c73",
+        "line-color": "#3a4b61",
         "line-opacity": [
           "interpolate",
           [
@@ -1762,7 +1762,7 @@
         "line-join": "round"
       },
       "paint": {
-        "line-color": "#5a6c84",
+        "line-color": "#46586f",
         "line-opacity": [
           "interpolate",
           [
@@ -1833,7 +1833,7 @@
         "line-join": "round"
       },
       "paint": {
-        "line-color": "#687991",
+        "line-color": "#52637a",
         "line-opacity": [
           "interpolate",
           [
@@ -1903,7 +1903,7 @@
         "line-join": "round"
       },
       "paint": {
-        "line-color": "#8799af",
+        "line-color": "#6e8097",
         "line-opacity": [
           "interpolate",
           [
@@ -1968,7 +1968,7 @@
         "line-join": "round"
       },
       "paint": {
-        "line-color": "#a2b2c5",
+        "line-color": "#8798ad",
         "line-opacity": [
           "interpolate",
           [
@@ -2051,7 +2051,7 @@
       },
       "minzoom": 14,
       "paint": {
-        "line-color": "#60718a",
+        "line-color": "#4d5e74",
         "line-width": [
           "interpolate",
           [
