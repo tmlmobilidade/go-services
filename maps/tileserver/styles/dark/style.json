@@ -3034,7 +3034,7 @@
       "source-layer": "poi",
       "minzoom": 14,
       "filter": [
-        "any",
+        "all",
         [
           "match",
           [
@@ -3048,16 +3048,12 @@
           false
         ],
         [
-          "match",
+          "!=",
           [
             "get",
             "subclass"
           ],
-          [
-            "garden"
-          ],
-          true,
-          false
+          "tree"
         ]
       ],
       "layout": {
