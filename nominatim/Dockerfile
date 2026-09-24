@@ -6,6 +6,7 @@ ENV PBF_URL=https://download.geofabrik.de/europe/portugal-latest.osm.pbf \
     IMPORT_WIKIPEDIA=false \
     IMPORT_STYLE=full \
     FREEZE=false \
+	 IMPORT_STYLE=extratags \
     TZ=Europe/Lisbon
 
 EXPOSE 8080
