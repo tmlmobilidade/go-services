@@ -1,5 +1,0 @@
-FROM wiktorn/overpass-frontend:latest
-
-ENV OVERPASS_API_URL=/api
-
-EXPOSE 80
