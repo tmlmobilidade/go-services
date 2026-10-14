@@ -3,4 +3,8 @@ FROM grafana/grafana:latest
 ENV GF_PLUGINS_PREINSTALL=grafana-clickhouse-datasource
 ENV GF_DASHBOARDS_MIN_REFRESH_INTERVAL=1s
 
+ENV GF_SERVER_ROOT_URL=https://grafana.go.tmlmobilidade.pt/
+ENV GF_SERVER_DOMAIN=grafana.go.tmlmobilidade.pt
+ENV GF_SERVER_PROTOCOL=http
+
 EXPOSE 3000
