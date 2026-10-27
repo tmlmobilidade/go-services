@@ -21,24 +21,9 @@ scrape_configs:
     static_configs:
       - targets:
           - pr-702.go-stg.tmlmobilidade.pt
-  - job_name: pr702-hub-api-replicas
-    scheme: http
-    metrics_path: /metrics
-    kubernetes_sd_configs:
-      - role: pod
-    relabel_configs:
-      - source_labels: [__meta_kubernetes_namespace]
-        regex: pr-702
-        action: keep
-      - source_labels: [__meta_kubernetes_pod_label_app]
-        regex: hub-api
-        action: keep
-      - source_labels: [__meta_kubernetes_pod_container_port_number]
-        regex: "5050"
-        action: keep
-      - source_labels: [__address__]
-        regex: ([^:]+)(?::\d+)?
-        replacement: $1:5050
-        target_label: __address__
-      - source_labels: [__meta_kubernetes_pod_name]
-        target_label: pod
+  - job_name: pr702-hub-api
+    scheme: https
+    metrics_path: /hub/api/metrics
+    static_configs:
+      - targets:
+          - pr-702.go-stg.tmlmobilidade.pt
