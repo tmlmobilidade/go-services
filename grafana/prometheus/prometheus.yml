@@ -21,3 +21,9 @@ scrape_configs:
     static_configs:
       - targets:
           - pr-702.go-stg.tmlmobilidade.pt
+  - job_name: pr702-hub-api
+    scheme: https
+    metrics_path: /hub/api/metrics
+    static_configs:
+      - targets:
+          - pr-702.go-stg.tmlmobilidade.pt
