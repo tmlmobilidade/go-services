@@ -7,6 +7,12 @@ on:
       - ".github/**"
       - "LICENSE"
       - "README.md"
+  workflow_dispatch:
+    inputs:
+      pull_base:
+        description: Pull latest base images (FROM) before build
+        type: boolean
+        default: true
 
 permissions:
   contents: read
@@ -23,64 +29,78 @@ jobs:
         with:
           fetch-depth: 2
 
-      - name: Detect service to rebuild
+      - name: Detect images to build
         id: detect
         shell: bash
         run: |
           set -euo pipefail
 
-          if git rev-parse --verify HEAD~1 >/dev/null 2>&1; then
-            CHANGED="$(git diff --name-only HEAD~1 HEAD)"
-          else
-            CHANGED="$(git ls-files)"
-          fi
-
-          echo "Changed files:"
-          echo "$CHANGED"
-
-          # Top-level dirs that contain a Dockerfile / Dockerfile.*
-          SERVICES="$(
-            echo "$CHANGED" \
-              | awk -F/ 'NF >= 1 && $1 != "" && $1 != ".github" { print $1 }' \
-              | sort -u \
-              | while read -r dir; do
-                  [ -d "$dir" ] || continue
-                  if compgen -G "$dir/Dockerfile" > /dev/null \
-                    || compgen -G "$dir/Dockerfile.*" > /dev/null; then
-                    echo "$dir"
-                  fi
-                done
-          )"
-
-          echo "Services:"
-          echo "$SERVICES"
-
           ENTRIES=()
-          while IFS= read -r dir; do
-            [ -z "$dir" ] && continue
+          add_dockerfile() {
+            local f="$1"
+            local dir base name file
+            dir="$(dirname "$f")"
+            base="$(basename "$f")"
+            if [ "$base" = "Dockerfile" ]; then
+              name="$dir"
+              file="Dockerfile"
+            elif [[ "$base" == Dockerfile.* ]]; then
+              name="${base#Dockerfile.}"
+              file="$base"
+            else
+              return 0
+            fi
+            ENTRIES+=("$(jq -nc \
+              --arg name "$name" \
+              --arg context "$dir" \
+              --arg file "$file" \
+              '{name:$name,context:$context,file:$file}')")
+          }
 
-            if [ -f "$dir/Dockerfile" ]; then
-              ENTRIES+=("$(jq -nc \
-                --arg name "$dir" \
-                --arg context "$dir" \
-                --arg file "Dockerfile" \
-                '{name:$name,context:$context,file:$file}')")
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "Manual run → rebuild all images"
+            while IFS= read -r f; do
+              [ -z "$f" ] && continue
+              add_dockerfile "$f"
+            done < <(find . -maxdepth 2 \( -name 'Dockerfile' -o -name 'Dockerfile.*' \) | sed 's|^\./||' | sort)
+          else
+            if git rev-parse --verify HEAD~1 >/dev/null 2>&1; then
+              CHANGED="$(git diff --name-only HEAD~1 HEAD)"
+            else
+              CHANGED="$(git ls-files)"
             fi
 
-            for f in "$dir"/Dockerfile.*; do
-              [ -f "$f" ] || continue
-              base="$(basename "$f")"
-              name="${base#Dockerfile.}"
-              ENTRIES+=("$(jq -nc \
-                --arg name "$name" \
-                --arg context "$dir" \
-                --arg file "$base" \
-                '{name:$name,context:$context,file:$file}')")
-            done
-          done <<< "$SERVICES"
+            echo "Changed files:"
+            echo "$CHANGED"
+
+            SERVICES="$(
+              echo "$CHANGED" \
+                | awk -F/ 'NF >= 1 && $1 != "" && $1 != ".github" { print $1 }' \
+                | sort -u \
+                | while read -r dir; do
+                    [ -d "$dir" ] || continue
+                    if compgen -G "$dir/Dockerfile" > /dev/null \
+                      || compgen -G "$dir/Dockerfile.*" > /dev/null; then
+                      echo "$dir"
+                    fi
+                  done
+            )"
+
+            echo "Services:"
+            echo "$SERVICES"
+
+            while IFS= read -r dir; do
+              [ -z "$dir" ] && continue
+              [ -f "$dir/Dockerfile" ] && add_dockerfile "$dir/Dockerfile"
+              for f in "$dir"/Dockerfile.*; do
+                [ -f "$f" ] || continue
+                add_dockerfile "$f"
+              done
+            done <<< "$SERVICES"
+          fi
 
           if [ "${#ENTRIES[@]}" -eq 0 ]; then
-            echo "No service images to build"
+            echo "No images to build"
             exit 1
           fi
 
@@ -124,6 +144,7 @@ jobs:
           context: ./${{ matrix.context }}
           file: ./${{ matrix.context }}/${{ matrix.file }}
           push: true
+          pull: ${{ github.event_name == 'workflow_dispatch' && inputs.pull_base || false }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha,scope=${{ matrix.name }}
